@@ -15,7 +15,7 @@ I can be contacted via the contact form at [peterwhite.net](https://peterwhite.n
 
 ### Install from the Chrome Web Store
 
-Simple Tab Sorter is [available via the official Chrome Web Store](https://chrome.google.com/webstore/detail/simple-tab-sorter/dbjjnkgppndbgakgfhklihodockcohfi).
+Simple Tab Sorter is [available via the official Chrome Web Store](https://chrome.google.com/webstore/detail/simple-tab-sorter/cgfpgnepljlgenjclbekbjdlgcodfmjp).
 
 Please note that the webstore version may lag behind the latest version found here. My intention is to limit experimentation to GitHub in an attempt to avoid being buried in support requests from the wider public audience using the Chrome Web Store.
 
