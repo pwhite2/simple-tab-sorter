@@ -1,0 +1,97 @@
+<!doctype html>
+<html lang="en">
+
+<head>
+    <meta charset="utf-8">
+    <meta name="author" content="Peter White">
+    <title>Simple Tab Sorter: User Guide</title>
+
+    <!-- Bootstrap core CSS -->
+    <link rel="stylesheet" href="bootstrap.min.css"/>
+    <link rel="stylesheet" href="style.css"/>
+</head>
+
+<body>
+    <div class="container bg-light">
+        <h3 class="navbar-brand h3">Simple Tab Sorter</h3>
+    </div>
+    <div class="container">
+        <div class="row">
+            <nav class="col-md-2 d-none d-md-block bg-light sidebar">
+                <div class="sidebar-sticky">
+                    <ul class="nav flex-column">
+                        <li class="nav-item">
+                            <a class="nav-link" href="options.html">Settings</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" href="#">User Guide</a>
+                        </li>
+                        <li class="nav-item active">
+                            <a class="nav-link active" href="about.html">About</a>
+                        </li>
+                    </ul>
+                </div>
+            </nav>
+
+            <main role="main" class="col-md-9 ml-sm-auto col-lg-10 px-4">
+                <div class="table">
+                    <table class="table table-md">
+                        <tbody>
+                            <tr class="row justify-content-start">
+                                <td colspan="col-md-2"><h3>User Guide</h3></td>
+                            </tr>
+                            <tr class="row justify-content-start mt-n4">
+                                <td class="col-md-12">
+                                    <p>Thanks for taking the time to read this page. Doing so will, hopefully, save you time and improve your experience with this extension!
+                                        Please refer back to this page after receiving updates because this plugin is still in the early stages of development and
+                                        behavioral changes may be introduced as a result of any bug fixes or enhancement requests.
+                                    </p>
+                                    <h4>General Usage and Behavior</h4>
+                                    <p>Regardless of the settings you choose, it's important to understand the following 2 things:
+                                        <ol>
+                                            <li>Tabs will only be sorted when Simple Tab Sorter's icon is clicked.</li>
+                                            <li>Tabs will only be sorted in the browser window where the icon is clicked.</li>
+                                        </ol>  
+                                        With this in mind, you can safely experiment with different sort options, without reshuffling all the tabs in your main window,
+                                        by opening several tabs in a new browser window and experimenting with the sort options in that window. Please note that extension settings are global,
+                                        so any setting changes you save will be applied to all open windows where you may click the Simple Tab Sorter icon.
+                                    </p>
+                                    <h4>Setting Explanations</h4>
+                                    <h5>Sort By</h5>
+                                    <p>At this time, you can sort by URL or page title. <em>Sort by URL</em>'s behavior is affected by the <em>Group From</em>, <em>Preserve order within groups</em>,
+                                    and <em>Group suspended tabs together</em> settings while <em>Sort by Title</em> ignores those settings and sorts strictly by localized page title in ascending order.
+                                    <em>Group suspended tabs together setting</em>.</p>
+                                    <h5>Group From</h5>
+                                    <p>This setting is used to determine whether the first instance of a "tab group" should be identified in order from left to right or right to left. As designed, Simple Tabs Sorter
+                                        does not <em>Sort by URL</em> alphabetically. It can be configured to sort alphabetically, within groups (see below), but <em>my intention was to create an extension that allows
+                                        people to quickly, and easily, determine their desired "tab group" order by manually rearranging only a handful of tabs before clicking on the Simple Tab Sorter icon</em>.
+                                    </p>
+                                    <p>While this may seem unusual, at first, I encourage you to experiment with <em>Sort by URL</em> and this setting for a while - I think it will quickly grow on you if you're
+                                        not a fan from the start.
+                                    </p>
+                                    <h5>Preserve order within groups</h5>
+                                    <p>The default behavior of this extension is to preserve the pre-sort order of tabs within the sorted tab groups. I find this preferable to sorting everything
+                                        by URL, but included this as an option for others who prefer to have all URLs sorted alphabetically.</p>
+                                    <h5>Group suspended tabs together</h5>
+                                    <p>Other tab sorting extensions that I've used have grouped all tabs suspended by The Great Suspender together, because The Great Suspender modifies the URL of
+                                        suspended tabs and retains the original URL as a query parameter. I'm a big fan of The Great Suspender, but have found that sorting behavior annoying, which was one of my primary
+                                        reasons for creating Simple Tab Sorter.
+                                    </p>
+                                    <p>
+                                        By default, Simple Tab Sorter <strong>will not</strong> <em>Group suspended tabs together</em> - your suspended tabs will be sorted as if they were unsuspended. If you check the box,
+                                        all suspended tabs will be shifted to the far left side of your browser and maintain their relative position to each other unless <em>Preserve order within groups</em> is <strong>deselected</strong>,
+                                        in which case the suspended tabs will be subsorted by URL.
+                                    </p>
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </main>
+        </div>
+    </div>
+    <script src="jquery-3.4.1.slim.min.js"></script>
+    <script src="bootstrap.min.js"></script>
+</body>
+
+</html>

@@ -1,0 +1,111 @@
+<!doctype html>
+<html lang="en">
+
+<head>
+    <meta charset="utf-8">
+    <meta name="author" content="Peter White">
+    <title>Simple Tab Sorter: Settings Page</title>
+
+    <!-- Bootstrap core CSS -->
+    <link rel="stylesheet" href="bootstrap.min.css"/>
+    <link rel="stylesheet" href="style.css"/>
+</head>
+
+<body>
+    <div class="container bg-light">
+        <h3 class="navbar-brand h3">Simple Tab Sorter</h3>
+    </div>
+    <div class="container">
+        <div class="row">
+            <nav class="col-md-2 d-none d-md-block bg-light sidebar">
+                <div class="sidebar-sticky">
+                    <ul class="nav flex-column">
+                        <li class="nav-item">
+                            <a class="nav-link" href="#">Settings</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" href="userguide.html">User Guide</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" href="about.html">About</a>
+                        </li>
+                    </ul>
+                </div>
+            </nav>
+
+            <main role="main" class="col-md-9 ml-md-auto col-lg-10 px-4">
+                <div class="table">
+                    <table class="table table-md">
+                        <tbody>
+                            <tr class="row justify-content-start">
+                                <td colspan="col-md-2"><h3>Settings</h3></td>
+                            </tr>
+                            <tr class="row justify-content-start mt-n4">
+                                <td colspan="col-md-2">
+                                    <label for="sortBy">Sort By:<br/>
+                                    <select id="sortBy">
+                                        <option value="url">URL</option>
+                                        <option value="title">Title</option>
+                                    </select>
+                                    </label>
+                                </td>
+                            </tr>
+                            <tr class="row justify-content-start mt-n4">
+                                <td colspan="col-md-2">
+                                    <label for="groupFrom">Group From:<br/>
+                                        <select id="groupFrom">
+                                            <option value="leftToRight">Left to Right</option>
+                                            <option value="rightToLeft">Right to Left</option>
+                                        </select>
+                                    </label>
+                                </td>
+                            </tr>
+                            <tr class="row justify-content-start mt-n4">
+                                <td colspan="col-md-2">
+                                    <label for="preserveOrderWithinGroups">
+                                        <input type="checkbox" id="preserveOrderWithinGroups" name="preserveOrderWithinGroups"> Preserve order within groups
+                                    </label>
+                                </td>
+                            </tr>
+                            <tr class="row justify-content-start mt-n4">
+                                <td colspan="col-md-2">
+                                    <label for="groupSuspendedTabs">
+                                        <input type="checkbox" id="groupSuspendedTabs" name="groupSuspendedTabs">
+                                        Group <a href="https://chrome.google.com/webstore/detail/the-great-suspender/klbibkeccnjlkjkiokjodocebajanakg">suspended</a> tabs together
+                                    </label>
+                                </td>
+                            </tr>
+                            <tr class="row justify-content-start mt-n4">
+                                <td colspan="col-md-2">&nbsp;</td>
+                            </tr>
+                            <tr class="row justify-content-start mt-n4">
+                                <td colspan="col-md-2">
+                                    <button id="save" class="btn btn-primary" type="submit" disabled>Save</button>
+                                </td>
+                            </tr>
+                            <tr class="row justify-content-start mt-n4">
+                                <td colspan="col-md-2">&nbsp;</td>
+                            </tr>
+                            <tr class="row justify-content-start mt-n4">
+                                <td colspan="col-md-1">
+                                    <button id="status" class="alert alert-success invisible" role="alert">Options Saved</button>
+                                </td>
+                            </tr>
+                            <tr class="row justify-content-start mt-n4">
+                                <td colspan="col-md-2">Brought to you by <a href="https://peterwhite.net">Peter White</a></td>
+                            </tr>
+                            <tr class="row justify-content-start mt-n4">
+                                <td colspan="col-md-2">Icon design by Logan White</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </main>
+        </div>
+    </div>
+    <script src="jquery-3.4.1.slim.min.js"></script>
+    <script src="bootstrap.min.js"></script>
+    <script src="options.js"></script>
+</body>
+
+</html>

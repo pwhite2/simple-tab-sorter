@@ -1,0 +1,12 @@
+#status {
+   border-collapse: collapse;
+}
+ 
+#status tbody tr td {
+   padding: 0; 
+   margin: 0;
+}
+
+.table th, .table td { 
+   border-top: none !important; 
+}
