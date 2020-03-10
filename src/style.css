@@ -10,3 +10,12 @@
 .table th, .table td { 
    border-top: none !important; 
 }
+
+.sidebar .nav-link {
+   font-weight: 500;
+   color: #333;
+ }
+ 
+ .sidebar .nav-link.active {
+   color: #007bff;
+ }
