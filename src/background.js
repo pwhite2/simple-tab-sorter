@@ -8,6 +8,7 @@ chrome.browserAction.onClicked.addListener(function (tab) {
     var tabs = chrome.tabs.query({
         currentWindow: true
     }, function (tabs) {
+        _gaq.push(['_trackEvent', 'Simple Tab Sorter extension', 'clicked']);
         if (tabs.length > 0) {
             // Fetch persisted settings and sort accordingly...
             chrome.storage.sync.get({
