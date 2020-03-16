@@ -11,7 +11,7 @@ function saveOptions() {
         groupSuspendedTabs: groupSuspendedTabs
     }, function () {
         document.getElementById('save').setAttribute("disabled", true);
-        // Update status to let user know options were saved.
+        // Show status to let user know changes were saved
         $('#status').removeClass("invisible");
         $('#status').addClass("visible");
     });
@@ -19,13 +19,14 @@ function saveOptions() {
 
 // Restore options state from chrome.storage
 function restoreOptions() {
-    // Use default value and preserveOrderWithinGroups = false.
+    // Use default value and preserveOrderWithinGroups = false
     chrome.storage.sync.get({
-        sortBy: 'url',
+        sortBy: 'custom',
         groupFrom: 'leftToRight',
         preserveOrderWithinGroups: true,
         groupSuspendedTabs: false
     }, function (items) {
+        toggleTabGroupOptions(items.sortBy);
         document.getElementById('sortBy').value = items.sortBy;
         document.getElementById('groupFrom').value = items.groupFrom;
         document.getElementById('preserveOrderWithinGroups').checked = items.preserveOrderWithinGroups;
@@ -34,10 +35,8 @@ function restoreOptions() {
 }
 
 function toggleSaveButton() {
-    $('#status').removeClass("visible");
-    $('#status').addClass("invisible");
     chrome.storage.sync.get({
-        sortBy: 'url',
+        sortBy: 'custom',
         groupFrom: 'leftToRight',
         preserveOrderWithinGroups: true,
         groupSuspendedTabs: false
@@ -47,27 +46,34 @@ function toggleSaveButton() {
             document.getElementById('preserveOrderWithinGroups').checked != items.preserveOrderWithinGroups ||
             document.getElementById('groupSuspendedTabs').checked != items.groupSuspendedTabs) {
             document.getElementById('save').removeAttribute("disabled");
+            // Hide status to reflect that changes have not been saved
+            $('#status').removeClass("visible");
+            $('#status').addClass("invisible");
         } else {
             document.getElementById('save').setAttribute("disabled", true);
         }
     });
 }
 
-function toggleTabGroupOptions() {
-    if ($('#sortBy option:selected').val() == "title") {
+function toggleTabGroupOptions(sortBy) {
+    if (sortBy == "title" || sortBy == "url") {
         $('#groupFrom').prop('disabled', true);
         $('#preserveOrderWithinGroups').prop('disabled', true);
-        $('#groupSuspendedTabs').prop('disabled', true);
     } else {
         $('#groupFrom').prop('disabled', false);
         $('#preserveOrderWithinGroups').prop('disabled', false);
-        $('#groupSuspendedTabs').prop('disabled', false);
     }
     toggleSaveButton();
 }
 
 document.addEventListener('DOMContentLoaded', restoreOptions);
-document.getElementById('sortBy').addEventListener('change', toggleTabGroupOptions);
+$("#settings-form").submit(function(e) {
+    e.preventDefault();
+});
+
+document.getElementById('sortBy').addEventListener('change', function() {
+    toggleTabGroupOptions(this.value);
+});
 document.getElementById('groupFrom').addEventListener('change', toggleSaveButton);
 document.getElementById('preserveOrderWithinGroups').addEventListener('change', toggleSaveButton);
 document.getElementById('groupSuspendedTabs').addEventListener('change', toggleSaveButton);

@@ -34,6 +34,71 @@
             </nav>
 
             <main role="main" class="col-md-9 ml-md-auto col-lg-10 px-4">
+            <form id="settings-form" class="justify-content-start">
+                <div class="form-group">
+                    <h3 class="padded-title">Settings</h3>
+                </div>
+                <div class="setting-group">
+                    <div class="form-group">
+                        <label for="sortBy">Sort By:<br/>
+                        <select class="form-control" id="sortBy">
+                            <option value="title">Title</option>
+                            <option value="url">URL</option>
+                            <option value="custom">Custom</option>
+                        </select>
+                        </label>
+                    </div>
+                    <div class="form-check">
+                        <input type="checkbox" class="form-check-input" id="groupSuspendedTabs" name="groupSuspendedTabs">
+                        <label class="form-check-label" for="groupSuspendedTabs">
+                            Group <a href="https://chrome.google.com/webstore/detail/the-great-suspender/klbibkeccnjlkjkiokjodocebajanakg" target="_blank">suspended</a> tabs together
+                        </label>
+                    </div>
+                </div>
+                <div class="setting-group">
+                    <div class="form-group">
+                        <label for="groupFrom">Group From:<br/>
+                        <select class="form-control" id="groupFrom">
+                            <option value="leftToRight">Left to Right</option>
+                            <option value="rightToLeft">Right to Left</option>
+                        </select>
+                        </label>
+                    </div>
+                    <div class="form-check">
+                        <input type="checkbox" class="form-check-input" id="preserveOrderWithinGroups" name="preserveOrderWithinGroups">
+                        <label class="form-check-label" for="preserveOrderWithinGroups">
+                            Preserve order within groups
+                        </label>
+                    </div>
+                </div>
+                <div class="row">
+                    <div>&nbsp;</div>
+                </div>
+                <div class="row">
+                    <div class="col-auto">
+                        <button id="save" class="btn btn-primary" type="submit" disabled>Save</button>
+                    </div>
+                    <div class="col-auto">
+                        <div id="status" class="btn alert-success invisible">Settings Saved</div>
+                    </div>
+                </div>
+                <div class="row">
+                    <div>&nbsp;</div>
+                </div>
+                <div class="row">
+                    <div class="col">
+                        <div>Brought to you by <a href="https://peterwhite.net" target="_blank">Peter White</a></div>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col">
+                        <div>Icon design by Logan White</div>
+                    </div>
+                </div>
+            </form>
+            </main>
+            <!--
+            <main role="main" class="col-md-9 ml-md-auto col-lg-10 px-4">
                 <div class="table">
                     <table class="table table-md">
                         <tbody>
@@ -46,7 +111,16 @@
                                     <select id="sortBy">
                                         <option value="url">URL</option>
                                         <option value="title">Title</option>
+                                        <option value="custom">Custom</option>
                                     </select>
+                                    </label>
+                                </td>
+                            </tr>
+                            <tr class="row justify-content-start mt-n4">
+                                <td colspan="col-md-2">
+                                    <label for="groupSuspendedTabs">
+                                        <input type="checkbox" id="groupSuspendedTabs" name="groupSuspendedTabs">
+                                        Group <a href="https://chrome.google.com/webstore/detail/the-great-suspender/klbibkeccnjlkjkiokjodocebajanakg" target="_blank">suspended</a> tabs together
                                     </label>
                                 </td>
                             </tr>
@@ -64,14 +138,6 @@
                                 <td colspan="col-md-2">
                                     <label for="preserveOrderWithinGroups">
                                         <input type="checkbox" id="preserveOrderWithinGroups" name="preserveOrderWithinGroups"> Preserve order within groups
-                                    </label>
-                                </td>
-                            </tr>
-                            <tr class="row justify-content-start mt-n4">
-                                <td colspan="col-md-2">
-                                    <label for="groupSuspendedTabs">
-                                        <input type="checkbox" id="groupSuspendedTabs" name="groupSuspendedTabs">
-                                        Group <a href="https://chrome.google.com/webstore/detail/the-great-suspender/klbibkeccnjlkjkiokjodocebajanakg" target="_blank">suspended</a> tabs together
                                     </label>
                                 </td>
                             </tr>
@@ -101,6 +167,7 @@
                     </table>
                 </div>
             </main>
+            -->
         </div>
     </div>
     <script src="jquery-3.4.1.slim.min.js"></script>
