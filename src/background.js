@@ -11,9 +11,12 @@ function isSuspended(tab) {
 
 // One-time installation and v0.2.0 upgrade handlers...
 chrome.runtime.onInstalled.addListener(function (details) {
+
+    // TODO: Track removals, eventually do something like https://shivankaul.com/blog/feedback-form-for-chrome-extensions (add for both install and update)
     try {
         var thisVersion = chrome.runtime.getManifest().version;
         if (details.reason == "install") {
+            _gaq.push(['_trackEvent', 'Simple Tab Sorter extension', 'installed']);
             alert(`Welcome to Simple Tab Sorter!
 
 Please review the "User Guide" before getting started.`);
@@ -128,6 +131,10 @@ function sortByTitleOrUrl(tabs, sortBy, groupSuspendedTabs) {
 
     // Shift suspended tabs left (if groupSuspendedTabs == true). Otherwise, sort by title in the browser's current locale.
     function _titleComparator(a, b, groupSuspendedTabs) {
+        if (a.pinned || b.pinned) {
+            return 0;
+        }
+
         if (groupSuspendedTabs) {
             if (isSuspended(a) && !isSuspended(b)) return -1;
             if (!isSuspended(a) && isSuspended(b)) return 1;
@@ -137,6 +144,10 @@ function sortByTitleOrUrl(tabs, sortBy, groupSuspendedTabs) {
 
     // Shift suspended tabs left (if groupSuspendedTabs == true). Otherwise, sort by URL in the browser's current locale.
     function _urlComparator(a, b, groupSuspendedTabs) {
+        if (a.pinned || b.pinned) {
+            return 0;
+        }
+
         // Shift suspended tabs left...
         if (groupSuspendedTabs) {
             if (isSuspended(a) && !isSuspended(b)) return -1;
@@ -209,6 +220,10 @@ function sortByCustom(tabs, groupFrom, groupSuspendedTabs, preserveOrderWithinGr
     }
 
     function _customSortComparator(a, b, groupSuspendedTabs) {
+        if (a.pinned || b.pinned) {
+            return 0;
+        }
+
         // Shift suspended tabs left...
         if (groupSuspendedTabs) {
             if (isSuspended(a) && !isSuspended(b)) return -1;
