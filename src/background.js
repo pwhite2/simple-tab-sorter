@@ -11,23 +11,29 @@ function isSuspended(tab) {
 
 // One-time installation and v0.2.0 upgrade handlers...
 chrome.runtime.onInstalled.addListener(function (details) {
+
+    // TODO: Track removals, eventually do something like https://shivankaul.com/blog/feedback-form-for-chrome-extensions (add for both install and update)
     try {
         var thisVersion = chrome.runtime.getManifest().version;
         if (details.reason == "install") {
+            _gaq.push(['_trackEvent', 'Simple Tab Sorter extension', 'installed']);
             alert(`Welcome to Simple Tab Sorter!
 
 Please review the "User Guide" before getting started.`);
             window.open(chrome.runtime.getURL('userguide.html'));
-        } else if (details.reason == "update" && thisVersion == "0.2.0") {
+            // Set uninstall URL to Google feedback form if browser supports it...
+            if (chrome.runtime.setUninstallURL) {
+                var uninstallGoogleFormLink = 'https://docs.google.com/forms/d/e/1FAIpQLSe-r_WFNry_KZCwOjdMjDjiS8sEIWmmwY-3hbSmIYV393RLCA/viewform';
+                chrome.runtime.setUninstallURL(uninstallGoogleFormLink);
+            }
+        } else if (details.reason == "update" && thisVersion == "0.3.0") {
             chrome.storage.sync.get({
                 sortBy: 'url',
             }, function (items) {
                 if (items.sortBy == "url") {
-                    alert(`Simple Tab Sorter has been updated to v0.2.0.
+                    alert(`Simple Tab Sorter has been updated to v0.3.0.
 
-Please note that "Sort By: URL" now sorts strictly by URL and that "Sort By: Custom" has been added to support the previous "Sort By: URL" behavior.
-
-Your settings have been changed from "Sort By: URL" to "Sort By: Custom" to preserve the behavior you have been using.
+Please note that "Sort pinned tabs" has been added to the "Settings" page and is disabled by default.
 
 Please review the updated User Guide to learn about the latest changes.`);
                     chrome.storage.sync.set({
@@ -55,15 +61,16 @@ chrome.browserAction.onClicked.addListener(function (tab) {
                 sortBy: "url",
                 groupFrom: "leftToRight",
                 preserveOrderWithinGroups: false,
-                groupSuspendedTabs: false
+                groupSuspendedTabs: false,
+                sortPinnedTabs: false
             }, function (result) {
                switch (result.sortBy) {
                    case "url":
                    case "title":
-                       sortByTitleOrUrl(tabs, result.sortBy, result.groupSuspendedTabs);
+                       sortByTitleOrUrl(tabs, result.sortBy, result.groupSuspendedTabs, result.sortPinnedTabs);
                        break;
                    case "custom":
-                       sortByCustom(tabs, result.groupFrom, result.groupSuspendedTabs, result.preserveOrderWithinGroups);
+                       sortByCustom(tabs, result.groupFrom, result.groupSuspendedTabs, result.preserveOrderWithinGroups, result.sortPinnedTabs);
                        break;
                     default:
                         alert('Invalid sort-by condition encountered!');
@@ -116,18 +123,23 @@ function compareByUrlComponents(urlA, urlB) {
 }
 
 // Group suspended tabs to left side if 'groupSuspendedTabs' is checked in settings
-function sortByTitleOrUrl(tabs, sortBy, groupSuspendedTabs) {
+function sortByTitleOrUrl(tabs, sortBy, groupSuspendedTabs, sortPinnedTabs) {
     // Group suspended tabs to the left, using comparator for unsuspended tabs.
     tabs.sort(function (a, b) {
         if (sortBy == "title") {
-            return _titleComparator(a, b, groupSuspendedTabs);
+            return _titleComparator(a, b, groupSuspendedTabs, sortPinnedTabs);
         } else {
-            return _urlComparator(a, b, groupSuspendedTabs);
+            return _urlComparator(a, b, groupSuspendedTabs, sortPinnedTabs);
         }
     });
 
     // Shift suspended tabs left (if groupSuspendedTabs == true). Otherwise, sort by title in the browser's current locale.
-    function _titleComparator(a, b, groupSuspendedTabs) {
+    function _titleComparator(a, b, groupSuspendedTabs, sortPinnedTabs) {
+        // Fix for Issue #6 - Option to exclude pinned tabs in the sort action (excluded by default now)
+        if (!sortPinnedTabs && (a.pinned || b.pinned)) {
+            return 0;
+        }
+
         if (groupSuspendedTabs) {
             if (isSuspended(a) && !isSuspended(b)) return -1;
             if (!isSuspended(a) && isSuspended(b)) return 1;
@@ -136,7 +148,11 @@ function sortByTitleOrUrl(tabs, sortBy, groupSuspendedTabs) {
     }
 
     // Shift suspended tabs left (if groupSuspendedTabs == true). Otherwise, sort by URL in the browser's current locale.
-    function _urlComparator(a, b, groupSuspendedTabs) {
+    function _urlComparator(a, b, groupSuspendedTabs, sortPinnedTabs) {
+        if (!sortPinnedTabs && (a.pinned || b.pinned)) {
+            return 0;
+        }
+
         // Shift suspended tabs left...
         if (groupSuspendedTabs) {
             if (isSuspended(a) && !isSuspended(b)) return -1;
@@ -151,7 +167,7 @@ function sortByTitleOrUrl(tabs, sortBy, groupSuspendedTabs) {
 }
 
 // Sort by URL as defined by the configured extension settings
-function sortByCustom(tabs, groupFrom, groupSuspendedTabs, preserveOrderWithinGroups) {
+function sortByCustom(tabs, groupFrom, groupSuspendedTabs, preserveOrderWithinGroups, sortPinnedTabs) {
     var tabGroupMap = new Map();
     var left = 0, suspendedTabCount = 0, right = tabs.length;
 
@@ -182,7 +198,7 @@ function sortByCustom(tabs, groupFrom, groupSuspendedTabs, preserveOrderWithinGr
         }
     }
 
-    tabs.sort(function (a, b) { return _customSortComparator(a, b, groupSuspendedTabs); });
+    tabs.sort(function (a, b) { return _customSortComparator(a, b, groupSuspendedTabs, sortPinnedTabs); });
 
     // Support independent subsorting of suspended tabs if 'groupSuspendedTabs' is checked in settings
     if (groupSuspendedTabs) {
@@ -208,7 +224,11 @@ function sortByCustom(tabs, groupFrom, groupSuspendedTabs, preserveOrderWithinGr
         tabs.push.apply(tabs, suspendedTabs.concat(postSorted));
     }
 
-    function _customSortComparator(a, b, groupSuspendedTabs) {
+    function _customSortComparator(a, b, groupSuspendedTabs, sortPinnedTabs) {
+        if (!sortPinnedTabs && (a.pinned || b.pinned)) {
+            return 0;
+        }
+
         // Shift suspended tabs left...
         if (groupSuspendedTabs) {
             if (isSuspended(a) && !isSuspended(b)) return -1;
