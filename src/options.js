@@ -4,11 +4,13 @@ function saveOptions() {
     var groupFrom = document.getElementById('groupFrom').value;
     var preserveOrderWithinGroups = document.getElementById('preserveOrderWithinGroups').checked;
     var groupSuspendedTabs = document.getElementById('groupSuspendedTabs').checked;
+    var sortPinnedTabs = document.getElementById('sortPinnedTabs').checked;
     chrome.storage.sync.set({
         sortBy: sortBy,
         groupFrom: groupFrom,
         preserveOrderWithinGroups: preserveOrderWithinGroups,
-        groupSuspendedTabs: groupSuspendedTabs
+        groupSuspendedTabs: groupSuspendedTabs,
+        sortPinnedTabs: sortPinnedTabs
     }, function () {
         document.getElementById('save').setAttribute("disabled", true);
         // Show status to let user know changes were saved
@@ -24,13 +26,15 @@ function restoreOptions() {
         sortBy: 'custom',
         groupFrom: 'leftToRight',
         preserveOrderWithinGroups: true,
-        groupSuspendedTabs: false
+        groupSuspendedTabs: false,
+        sortPinnedTabs: false
     }, function (items) {
         toggleTabGroupOptions(items.sortBy);
         document.getElementById('sortBy').value = items.sortBy;
         document.getElementById('groupFrom').value = items.groupFrom;
         document.getElementById('preserveOrderWithinGroups').checked = items.preserveOrderWithinGroups;
         document.getElementById('groupSuspendedTabs').checked = items.groupSuspendedTabs;
+        document.getElementById('sortPinnedTabs').checked = items.sortPinnedTabs;
     });
 }
 
@@ -39,12 +43,14 @@ function toggleSaveButton() {
         sortBy: 'custom',
         groupFrom: 'leftToRight',
         preserveOrderWithinGroups: true,
-        groupSuspendedTabs: false
+        groupSuspendedTabs: false,
+        sortPinnedTabs: false
     }, function (items) {
         if (document.getElementById('sortBy').value != items.sortBy ||
             document.getElementById('groupFrom').value != items.groupFrom ||
             document.getElementById('preserveOrderWithinGroups').checked != items.preserveOrderWithinGroups ||
-            document.getElementById('groupSuspendedTabs').checked != items.groupSuspendedTabs) {
+            document.getElementById('groupSuspendedTabs').checked != items.groupSuspendedTabs ||
+            document.getElementById('sortPinnedTabs').checked != items.sortPinnedTabs) {
             document.getElementById('save').removeAttribute("disabled");
             // Hide status to reflect that changes have not been saved
             $('#status').removeClass("visible");
@@ -77,4 +83,5 @@ document.getElementById('sortBy').addEventListener('change', function() {
 document.getElementById('groupFrom').addEventListener('change', toggleSaveButton);
 document.getElementById('preserveOrderWithinGroups').addEventListener('change', toggleSaveButton);
 document.getElementById('groupSuspendedTabs').addEventListener('change', toggleSaveButton);
+document.getElementById('sortPinnedTabs').addEventListener('change', toggleSaveButton);
 document.getElementById('save').addEventListener('click', saveOptions);

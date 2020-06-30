@@ -1,6 +1,6 @@
 #!/bin/sh
 
-VERSION="0.2.1"
+VERSION="0.3.0"
 
 # Replace version number if not already done so...
 gsed -i "s/\"version\": \".*\"/\"version\": \"$VERSION\"/g" src/manifest.json
@@ -11,5 +11,7 @@ gsed -i s/UA-XXXXXXXXX-X/$STS_GA_TRACKING_ID/g src/analytics.js
 # Zip src dir for upload to the Chrome Web Store
 zip -r simple-tab-sorter-v$VERSION.zip src
 
-# Revert tracking id change to src/analytics.js to prevent if from being unintentionally committed to GitHub
+# Revert tracking id change to src/analytics.js to prevent it from being unintentionally committed to GitHub
 git checkout HEAD -- src/analytics.js
+
+# TODO: Look into https://github.com/github-tools/github-release-notes
