@@ -45,6 +45,14 @@
                                     <p>Thanks for taking the time to read this page. Doing so will, hopefully, save you time and improve your experience with this extension!
                                         Please refer back to this page after receiving updates because behavioral changes may be introduced as a result of any bug fixes or enhancement requests.
                                     </p>
+                                    <div class="alert alert-secondary">
+                                    <h5>Important note about Chrome "Tab Groups" Support</h5>
+                                    <p>Google Chrome recently introduced "Tab Groups" but it looks like this is a work in progress from an extension API perspective... I say this because a "groupId" field has been added to the Tab API but the tab group name
+                                        isn't available via the extension API and I've experienced tabs being removed from tab groups while sorting even though the tab group id's remain unchanged.</p>
+                                    <p>Simple Tab Sorter v0.3.1 is a patch that ignores tab groups and the tabs contained within them. Ungrouped tabs will continue to be sorted, as they were in v0.3.0, but the position and contents of tab groups will remain unchanged. </p>
+                                    <p>If you're using tab groups and <b>ungrouped</b> tabs aren't sorting the way you expect, I'd suggest positioning all of your tab groups to the left of your ungrouped tabs to see whether that resolves the problem. I'd like to add full
+                                        support for sorting Tab Groups in the future but that will be somewhat dependent on both my available time and better Tab Group support via the Google Chome Tab API.
+                                    </div>
                                     <h4>General Usage and Behavior</h4>
                                     <p>Regardless of the settings you choose, it's important to understand the following 2 things:
                                         <ol class="alert alert-primary">

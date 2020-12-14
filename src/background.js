@@ -26,14 +26,15 @@ Please review the "User Guide" before getting started.`);
                 var uninstallGoogleFormLink = 'https://docs.google.com/forms/d/e/1FAIpQLSe-r_WFNry_KZCwOjdMjDjiS8sEIWmmwY-3hbSmIYV393RLCA/viewform';
                 chrome.runtime.setUninstallURL(uninstallGoogleFormLink);
             }
-        } else if (details.reason == "update" && thisVersion == "0.3.0") {
+        } else if (details.reason == "update" && thisVersion == "0.3.1") {
             chrome.storage.sync.get({
                 sortBy: 'url',
             }, function (items) {
                 if (items.sortBy == "url") {
-                    alert(`Simple Tab Sorter has been updated to v0.3.0.
+                    alert(`Simple Tab Sorter has been updated to v0.3.1.
 
-Please note that "Sort pinned tabs" has been added to the "Settings" page and is disabled by default.
+This is a patch release that prevents the removal of tabs from Chome's new
+"Tab Group" feature during tab sorting.
 
 Please review the updated User Guide to learn about the latest changes.`);
                     chrome.storage.sync.set({
@@ -126,6 +127,7 @@ function compareByUrlComponents(urlA, urlB) {
 function sortByTitleOrUrl(tabs, sortBy, groupSuspendedTabs, sortPinnedTabs) {
     // Group suspended tabs to the left, using comparator for unsuspended tabs.
     tabs.sort(function (a, b) {
+
         if (sortBy == "title") {
             return _titleComparator(a, b, groupSuspendedTabs, sortPinnedTabs);
         } else {
@@ -135,11 +137,17 @@ function sortByTitleOrUrl(tabs, sortBy, groupSuspendedTabs, sortPinnedTabs) {
 
     // Shift suspended tabs left (if groupSuspendedTabs == true). Otherwise, sort by title in the browser's current locale.
     function _titleComparator(a, b, groupSuspendedTabs, sortPinnedTabs) {
+        //  Don't sort grouped tabs until proper API support for tab groups is added to the chrome API...
+        if (a.groupId != -1 || b.groupId != -1) {
+            return 0;
+        }
+
         // Fix for Issue #6 - Option to exclude pinned tabs in the sort action (excluded by default now)
         if (!sortPinnedTabs && (a.pinned || b.pinned)) {
             return 0;
         }
 
+        // TODO: Verify whether this behavior was broken by the introduction of *Tab Groups*
         if (groupSuspendedTabs) {
             if (isSuspended(a) && !isSuspended(b)) return -1;
             if (!isSuspended(a) && isSuspended(b)) return 1;
@@ -149,6 +157,12 @@ function sortByTitleOrUrl(tabs, sortBy, groupSuspendedTabs, sortPinnedTabs) {
 
     // Shift suspended tabs left (if groupSuspendedTabs == true). Otherwise, sort by URL in the browser's current locale.
     function _urlComparator(a, b, groupSuspendedTabs, sortPinnedTabs) {
+
+        //  Don't sort grouped tabs until proper API support for tab groups is added to the chrome API...
+        if (a.groupId != -1 || b.groupId != -1) {
+            return 0;
+        }
+
         if (!sortPinnedTabs && (a.pinned || b.pinned)) {
             return 0;
         }
@@ -198,7 +212,16 @@ function sortByCustom(tabs, groupFrom, groupSuspendedTabs, preserveOrderWithinGr
         }
     }
 
-    tabs.sort(function (a, b) { return _customSortComparator(a, b, groupSuspendedTabs, sortPinnedTabs); });
+    //tabs.sort(function (a, b) { return _customSortComparator(a, b, groupSuspendedTabs, sortPinnedTabs); });
+    tabs.sort(function (a, b) {
+
+        //  Don't sort grouped tabs until proper API support for tab groups is added to the chrome API...
+        if (a.groupId != -1 || b.groupId != -1) {
+            return 0;
+        }
+
+        return _customSortComparator(a, b, groupSuspendedTabs, sortPinnedTabs);
+    });
 
     // Support independent subsorting of suspended tabs if 'groupSuspendedTabs' is checked in settings
     if (groupSuspendedTabs) {
