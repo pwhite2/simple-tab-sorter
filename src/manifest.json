@@ -1,7 +1,7 @@
 {
     "name": "Simple Tab Sorter",
     "description": "Simple tab sorter that allows user-defined tab group order.",
-    "version": "0.3.0",
+    "version": "0.3.1",
     "permissions": ["tabs", "storage"],
     "browser_action": {
         "default_title": "Simple Tab Sorter"
@@ -18,6 +18,6 @@
         "page": "options.html",
         "open_in_tab": true
     },
-    "content_security_policy": "script-src 'self' https://ssl.google-analytics.com; object-src 'self'",
+    "content_security_policy": "script-src 'self'; object-src 'self'",
     "manifest_version": 2
 }

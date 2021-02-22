@@ -49,16 +49,17 @@
                         </label>
                     </div>
                     <div class="form-check">
-                        <input type="checkbox" class="form-check-input" id="groupSuspendedTabs" name="groupSuspendedTabs">
-                        <label class="form-check-label" for="groupSuspendedTabs">
-                            Group <a href="https://chrome.google.com/webstore/detail/the-great-suspender/klbibkeccnjlkjkiokjodocebajanakg" target="_blank">suspended</a> tabs together
-                        </label>
-                    </div>
-                    <div class="form-check">
                         <input type="checkbox" class="form-check-input" id="sortPinnedTabs" name="sortPinnedTabs">
                         <label class="form-check-label" for="sortPinnedTabs">
                             Sort pinned tabs
                         </label>
+                    </div>
+                    <div class="form-check">
+                        <input type="checkbox" class="form-check-input" id="groupSuspendedTabs" name="groupSuspendedTabs">
+                        <label class="form-check-label" for="groupSuspendedTabs">
+                            Group suspended tabs together (if unchecked, enter Tab suspender extension id directly below)
+                        </label>
+                        <input type="text" class="form-control" id="tabSuspenderExtensionId" name="tabSuspenderExtensionId" value="">
                     </div>
                 </div>
                 <div class="setting-group">
@@ -178,7 +179,6 @@
     </div>
     <script src="jquery-3.4.1.slim.min.js"></script>
     <script src="bootstrap.min.js"></script>
-    <script src="analytics.js"></script>
     <script src="options.js"></script>
 </body>
 

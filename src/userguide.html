@@ -60,6 +60,35 @@
                                     <p>You can sort by Title, URL, or Custom. Only <em>Sort by Custom</em>'s behavior is affected by the "<em>Group From</em>" and "<em>Preserve order within groups</em>"
                                     settings. <em>Sort by Title</em> and <em>Sort by URL</em> ignore those settings and sort strictly by localized page <em>Title</em> or <em>URL</em> in ascending order.
                                     All <em>Sort By</em> options support the "<em>Group suspended tabs together</em>" setting, which groups all suspended tabs to the left side of your browser window.</p>
+                                    <h5>Sort pinned tabs</h5>
+                                    <p>
+                                        Simple Tab Sorter <b>ignores</b> pinned tabs by default. If you check the box, pinned tabs will remain grouped together but will be sub-sorted by the same criteria used to sort the rest of your tabs.
+                                    </p>
+                                    <h5>Group suspended tabs together (applicable if using an extension derived from The Great Suspender)</h5>
+                                    <p>Other tab sorting extensions that I've used have grouped all tabs suspended by The Great Suspender together, because The Great Suspender modifies the URL of
+                                        suspended tabs and retains the original URL as a query parameter. I was a major fan of the original The Great Suspender (before the transfer of ownership), but have found that sorting behavior annoying, which was one of my primary
+                                        reasons for creating Simple Tab Sorter.
+                                    </p>
+                                    <p>
+                                        By default, Simple Tab Sorter <strong>will not</strong> <em>Group suspended tabs together</em> - your suspended tabs will be sorted as if they were unsuspended. If you check the box,
+                                        all suspended tabs will be shifted to the far left side of your browser and maintain their relative position to each other unless "<em>Preserve order within groups</em>" is <strong>deselected</strong>,
+                                        in which case the suspended tabs will be subsorted by URL.
+                                    </p>
+                                    <h6>Tab suspender extension id (required if "Group suspended tabs together" is unchecked)</h6>
+                                    Look at the URL in your browser's address bar, for any suspended tab, and you should see something similar to the following...
+                                    <div class="code">
+                                        chrome-extension://<mark>klbibkeccnjlkjkiokjodocebajanakg</mark>/suspended.html#ttl=Google&pos=0&uri=https://www.google.com/
+                                    </div>
+                                    <p></p>
+                                    The example above shows the URL for a suspended https://www.google.com/ tab that was suspended by the original The Great Suspender extension. The highlighted  portion between
+                                    <i>chrome-extension://</i> and <i>/suspended.html</i> is the "extension id" that you should copy/paste into the input field directly below "Group suspended tabs together" in the
+                                    <a href="options.html">Settings</a> page - don't forget to click Save!
+
+                                    <p></p>
+                                    <p>Please note that the original The Great Suspender's extension id will appear in the "Tab suspender extension id" field (it's the default value) until you change and save the value
+                                        in that field. This value can be safely ignored if you're not using The Great Suspender or an extension derived from it.
+                                    </p>
+                                    <p></p>
                                     <h5>Group From (<em>Sort by Custom</em> only)</h5>
                                     <p>This setting is used to determine whether the first instance of a "tab group" should be identified in order from "<em>Left to Right</em>" or "<em>Right to Left</em>".
                                         <strong>This allows people to quickly, and easily, determine their desired "tab group" order by manually rearranging only a handful of tabs before clicking on the Simple Tab Sorter icon</strong>.
@@ -70,20 +99,6 @@
                                     <h5>Preserve order within groups (<em>Sort by Custom</em> only)</h5>
                                     <p>The default behavior of this extension is to preserve the pre-sorted order of tabs within the sorted tab groups. I find this preferable to sorting everything
                                         by <em>Title</em> or <em>URL</em>, but included this as an option for others who prefer to have everything sorted alphabetically. If deselected, tabs will be subsorted by URL.</p>
-                                    <h5>Group suspended tabs together</h5>
-                                    <p>Other tab sorting extensions that I've used have grouped all tabs suspended by The Great Suspender together, because The Great Suspender modifies the URL of
-                                        suspended tabs and retains the original URL as a query parameter. I'm a big fan of The Great Suspender, but have found that sorting behavior annoying, which was one of my primary
-                                        reasons for creating Simple Tab Sorter.
-                                    </p>
-                                    <p>
-                                        By default, Simple Tab Sorter <strong>will not</strong> <em>Group suspended tabs together</em> - your suspended tabs will be sorted as if they were unsuspended. If you check the box,
-                                        all suspended tabs will be shifted to the far left side of your browser and maintain their relative position to each other unless "<em>Preserve order within groups</em>" is <strong>deselected</strong>,
-                                        in which case the suspended tabs will be subsorted by URL.
-                                    </p>
-                                    <h5>Sort pinned tabs</h5>
-                                    <p>
-                                        Simple Tab Sorter <b>ignores</b> pinned tabs by default. If you check the box, pinned tabs will remain grouped together but will be sub-sorted by the same criteria used to sort the rest of your tabs.
-                                    </p>
                                 </td>
                             </tr>
                         </tbody>
@@ -94,7 +109,6 @@
     </div>
     <script src="jquery-3.4.1.slim.min.js"></script>
     <script src="bootstrap.min.js"></script>
-    <script src="analytics.js"></script>
     <script src="version.js"></script
 </body>
 
