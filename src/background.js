@@ -1,8 +1,11 @@
 'use strict';
 
+//  Preserve TGS ID in case the original TGS extension is currently installed...
 const THE_GREAT_SUSPENDER_EXTENSION_ID = "klbibkeccnjlkjkiokjodocebajanakg";
-const SUSPENDED_PREFIX = 'chrome-extension://' + THE_GREAT_SUSPENDER_EXTENSION_ID + '/suspended.html#';
-const SUSPENDED_PREFIX_LEN = SUSPENDED_PREFIX.length;
+
+var TAB_SUSPENDER_EXTENSION_ID = "";
+var SUSPENDED_PREFIX = 'chrome-extension://' + TAB_SUSPENDER_EXTENSION_ID + '/suspended.html#';
+var SUSPENDED_PREFIX_LEN = SUSPENDED_PREFIX.length;
 
 // Return whether tab is currently suspended
 function isSuspended(tab) {
@@ -16,7 +19,6 @@ chrome.runtime.onInstalled.addListener(function (details) {
     try {
         var thisVersion = chrome.runtime.getManifest().version;
         if (details.reason == "install") {
-            _gaq.push(['_trackEvent', 'Simple Tab Sorter extension', 'installed']);
             alert(`Welcome to Simple Tab Sorter!
 
 Please review the "User Guide" before getting started.`);
@@ -26,17 +28,17 @@ Please review the "User Guide" before getting started.`);
                 var uninstallGoogleFormLink = 'https://docs.google.com/forms/d/e/1FAIpQLSe-r_WFNry_KZCwOjdMjDjiS8sEIWmmwY-3hbSmIYV393RLCA/viewform';
                 chrome.runtime.setUninstallURL(uninstallGoogleFormLink);
             }
-        } else if (details.reason == "update" && thisVersion == "0.3.1") {
+        } else if (details.reason == "update" && thisVersion == "0.3.2") {
             chrome.storage.sync.get({
                 sortBy: 'url',
             }, function (items) {
                 if (items.sortBy == "url") {
-                    alert(`Simple Tab Sorter has been updated to v0.3.1.
+                    alert(`Simple Tab Sorter has been updated to v0.3.2.
 
 This is a patch release that prevents the removal of tabs from Chome's new
 "Tab Group" feature during tab sorting.
 
-Please review the updated User Guide to learn about the latest changes.`);
+Please review the updated User Guide to learn more about the latest changes.`);
                     chrome.storage.sync.set({
                         sortBy: "custom"
                     });
@@ -55,7 +57,6 @@ chrome.browserAction.onClicked.addListener(function (tab) {
         // Separate windows must be sorted separately - this is to prevent undesired accidental sorting in other windows...
         currentWindow: true
     }, function (tabs) {
-        _gaq.push(['_trackEvent', 'Simple Tab Sorter extension', 'clicked']);
         if (tabs.length > 0) {
             // Fetch persisted settings and sort accordingly...
             chrome.storage.sync.get({
@@ -63,8 +64,12 @@ chrome.browserAction.onClicked.addListener(function (tab) {
                 groupFrom: "leftToRight",
                 preserveOrderWithinGroups: false,
                 groupSuspendedTabs: false,
+                tabSuspenderExtensionId: THE_GREAT_SUSPENDER_EXTENSION_ID,
                 sortPinnedTabs: false
             }, function (result) {
+               TAB_SUSPENDER_EXTENSION_ID = result.tabSuspenderExtensionId;
+               SUSPENDED_PREFIX = 'chrome-extension://' + TAB_SUSPENDER_EXTENSION_ID + '/suspended.html#';
+               SUSPENDED_PREFIX_LEN = SUSPENDED_PREFIX.length;
                switch (result.sortBy) {
                    case "url":
                    case "title":
@@ -82,7 +87,7 @@ chrome.browserAction.onClicked.addListener(function (tab) {
     })
 })
 
-// Returns The Great Suspender's URL if 'groupSuspendedTabs' is set - otherwise, return's the current tab's URL or suspended tab's original URL
+// Returns the tab's suspended URL if 'groupSuspendedTabs' is set - otherwise, return's the current tab's URL or suspended tab's original URL
 function tabToUrl(tab, groupSuspendedTabs) {
     if (groupSuspendedTabs) {
         return new URL(tab.url);
@@ -115,10 +120,10 @@ function updateTabGroupMap(tabGroupMap, tab, sortBy, groupSuspendedTabs) {
     }
 }
 
-// Sorting strictly by URL may seem simpler, but I want to exclude protocol from the sort criteria...
+// Sorting strictly by URL may seem simpler, but I want to exclude protocol and leading "www." from the sort criteria...
 function compareByUrlComponents(urlA, urlB) {
-    var keyA = urlA.hostname + urlA.pathname + urlA.search + urlA.hash;
-    var keyB = urlB.hostname + urlB.pathname + urlB.search + urlB.hash;
+    var keyA = urlA.hostname.replace(/^www\./i, "") + urlA.pathname + urlA.search + urlA.hash;
+    var keyB = urlB.hostname.replace(/^www\./i, "") + urlB.pathname + urlB.search + urlB.hash;
 
     return keyA.localeCompare(keyB);
 }
@@ -189,7 +194,7 @@ function sortByCustom(tabs, groupFrom, groupSuspendedTabs, preserveOrderWithinGr
     if (groupFrom == "leftToRight") {
         // Ensures that suspended tabs will be shifted to the left side of browser if 'groupSuspendedTabs' is checked in settings
         if (groupSuspendedTabs) {
-            tabGroupMap.set(THE_GREAT_SUSPENDER_EXTENSION_ID, 0);
+            tabGroupMap.set(TAB_SUSPENDER_EXTENSION_ID, 0);
         }
         while (left !== right) {
             if (isSuspended(tabs[left])) {
@@ -208,11 +213,10 @@ function sortByCustom(tabs, groupFrom, groupSuspendedTabs, preserveOrderWithinGr
         }
         // Ensures that suspended tabs will be shifted to the left side of browser if 'groupSuspendedTabs' is checked in settings
         if (groupSuspendedTabs) {
-            tabGroupMap.set(THE_GREAT_SUSPENDER_EXTENSION_ID, tabGroupMap.size);
+            tabGroupMap.set(TAB_SUSPENDER_EXTENSION_ID, tabGroupMap.size);
         }
     }
 
-    //tabs.sort(function (a, b) { return _customSortComparator(a, b, groupSuspendedTabs, sortPinnedTabs); });
     tabs.sort(function (a, b) {
 
         //  Don't sort grouped tabs until proper API support for tab groups is added to the chrome API...
