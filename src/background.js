@@ -101,7 +101,7 @@ function tabToUrl(tab, groupSuspendedTabs) {
                 }
             }
         }
-        return new URL(tab.url);
+        return new URL(tab.pendingUrl || tab.url);
     }
 }
 
