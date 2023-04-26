@@ -28,15 +28,15 @@ Please review the "User Guide" before getting started.`);
                 var uninstallGoogleFormLink = 'https://docs.google.com/forms/d/e/1FAIpQLSe-r_WFNry_KZCwOjdMjDjiS8sEIWmmwY-3hbSmIYV393RLCA/viewform';
                 chrome.runtime.setUninstallURL(uninstallGoogleFormLink);
             }
-        } else if (details.reason == "update" && thisVersion == "0.3.2") {
+        } else if (details.reason == "update" && thisVersion == "0.3.3") {
             chrome.storage.sync.get({
                 sortBy: 'url',
             }, function (items) {
                 if (items.sortBy == "url") {
-                    alert(`Simple Tab Sorter has been updated to v0.3.2.
+                    alert(`Simple Tab Sorter has been updated to v0.3.3.
 
-This is a patch release that prevents the removal of tabs from Chome's new
-"Tab Group" feature during tab sorting.
+This is a small compatibility patch that adds support for Chrome's new
+tab suspension feature.
 
 Please review the updated User Guide to learn more about the latest changes.`);
                     chrome.storage.sync.set({
