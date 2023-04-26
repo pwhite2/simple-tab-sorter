@@ -1,7 +1,7 @@
 {
     "name": "Simple Tab Sorter",
     "description": "Simple tab sorter that allows user-defined tab group order.",
-    "version": "0.3.2",
+    "version": "0.3.3",
     "permissions": ["tabs", "storage"],
     "browser_action": {
         "default_title": "Simple Tab Sorter"
