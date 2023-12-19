@@ -1,91 +1,126 @@
 'use strict';
 
-//  Preserve TGS ID in case the original TGS extension is currently installed...
-const THE_GREAT_SUSPENDER_EXTENSION_ID = "klbibkeccnjlkjkiokjodocebajanakg";
+// Default to "The Marvellous Suspender" as the de facto The Great Suspender replacement
+const THE_MARVELLOUS_SUSPENDER_EXTENSION_ID = "noogafoofpebimajpfpamcfhoaifemoa";
 
 var TAB_SUSPENDER_EXTENSION_ID = "";
 var SUSPENDED_PREFIX = 'chrome-extension://' + TAB_SUSPENDER_EXTENSION_ID + '/suspended.html#';
 var SUSPENDED_PREFIX_LEN = SUSPENDED_PREFIX.length;
+
+// Extension icon onClick handler...
+chrome.runtime.onMessage.addListener(function(request, sender, sendResponse) {
+    if (request.type == "click_event") {
+        sortTabGroups();
+        sendResponse({ message: 'success' });
+    }
+})
 
 // Return whether tab is currently suspended
 function isSuspended(tab) {
     return tab.url.startsWith(SUSPENDED_PREFIX);
 }
 
-// One-time installation and v0.2.0 upgrade handlers...
+// One-time installation and v0.4.0 upgrade handlers...
 chrome.runtime.onInstalled.addListener(function (details) {
 
-    // TODO: Track removals, eventually do something like https://shivankaul.com/blog/feedback-form-for-chrome-extensions (add for both install and update)
-    try {
-        var thisVersion = chrome.runtime.getManifest().version;
-        if (details.reason == "install") {
-            alert(`Welcome to Simple Tab Sorter!
-
-Please review the "User Guide" before getting started.`);
-            window.open(chrome.runtime.getURL('userguide.html'));
-            // Set uninstall URL to Google feedback form if browser supports it...
+    var thisVersion = chrome.runtime.getManifest().version;
+    if (details.reason == "install") {
+        chrome.storage.sync.set({
+            installedVersion: thisVersion,
+            newInstall: true,
+            newUpdate: false
+        }, function () {
+            // Prompt for (optional) uninstall feedback so I can see if there's room for improvement...
             if (chrome.runtime.setUninstallURL) {
                 var uninstallGoogleFormLink = 'https://docs.google.com/forms/d/e/1FAIpQLSe-r_WFNry_KZCwOjdMjDjiS8sEIWmmwY-3hbSmIYV393RLCA/viewform';
                 chrome.runtime.setUninstallURL(uninstallGoogleFormLink);
             }
-        } else if (details.reason == "update" && thisVersion == "0.3.3") {
-            chrome.storage.sync.get({
-                sortBy: 'url',
-            }, function (items) {
-                if (items.sortBy == "url") {
-                    alert(`Simple Tab Sorter has been updated to v0.3.3.
-
-This is a small compatibility patch that adds support for Chrome's new
-tab suspension feature.
-
-Please review the updated User Guide to learn more about the latest changes.`);
-                    chrome.storage.sync.set({
-                        sortBy: "custom"
-                    });
-                    window.open(chrome.runtime.getURL('userguide.html'));
-                }
-            });
-        }
-    } catch(e) {
-        alert("Please report to developer: OnInstall Error - " + e);
+        });
+    } else if (details.reason == "update") {
+        chrome.storage.sync.set({
+            installedVersion: thisVersion,
+            newInstall: false,
+            newUpdate: true
+        }, function () { });
     }
-});
-
-// Extension icon onClick handler...
-chrome.browserAction.onClicked.addListener(function (tab) {
-    var tabs = chrome.tabs.query({
-        // Separate windows must be sorted separately - this is to prevent undesired accidental sorting in other windows...
-        currentWindow: true
-    }, function (tabs) {
-        if (tabs.length > 0) {
-            // Fetch persisted settings and sort accordingly...
-            chrome.storage.sync.get({
-                sortBy: "url",
-                groupFrom: "leftToRight",
-                preserveOrderWithinGroups: false,
-                groupSuspendedTabs: false,
-                tabSuspenderExtensionId: THE_GREAT_SUSPENDER_EXTENSION_ID,
-                sortPinnedTabs: false
-            }, function (result) {
-               TAB_SUSPENDER_EXTENSION_ID = result.tabSuspenderExtensionId;
-               SUSPENDED_PREFIX = 'chrome-extension://' + TAB_SUSPENDER_EXTENSION_ID + '/suspended.html#';
-               SUSPENDED_PREFIX_LEN = SUSPENDED_PREFIX.length;
-               switch (result.sortBy) {
-                   case "url":
-                   case "title":
-                       sortByTitleOrUrl(tabs, result.sortBy, result.groupSuspendedTabs, result.sortPinnedTabs);
-                       break;
-                   case "custom":
-                       sortByCustom(tabs, result.groupFrom, result.groupSuspendedTabs, result.preserveOrderWithinGroups, result.sortPinnedTabs);
-                       break;
-                    default:
-                        alert('Invalid sort-by condition encountered!');
-               }
-               moveTabs(tabs);
-            });
-        }
-    })
 })
+
+// Separate windows must be sorted separately - this is to prevent undesired accidental sorting in other windows...
+async function sortTabGroups() {
+
+    let settings = await chrome.storage.sync.get({
+        sortBy: "url",
+        groupFrom: "leftToRight",
+        preserveOrderWithinGroups: false,
+        groupSuspendedTabs: false,
+        tabSuspenderExtensionId: THE_MARVELLOUS_SUSPENDER_EXTENSION_ID,
+        sortPinnedTabs: false
+    });
+
+    let pinnedTabs = await chrome.tabs.query({
+        pinned: true,
+        currentWindow: true,
+    })
+    var groupOffset = pinnedTabs.length
+
+    if (pinnedTabs.length > 0 && settings.sortPinnedTabs) {
+        sortTabs(pinnedTabs, pinnedTabs[0].groupId, settings)
+    }
+
+    await chrome.tabGroups.query({ windowId: -1 }, function (tabGroups) {
+        // You can prefix your tab group names with numeric values if you'd like to override the sort order...
+        tabGroups.sort(function (a, b) {
+            return b.title.localeCompare(a.title);
+        });
+
+        // Sort tab groups
+        for (let i = 0; i < tabGroups.length; i++) {
+            let groupId = tabGroups[i].id
+            chrome.tabGroups.move(groupId, { index: groupOffset });
+            chrome.tabs.query({
+                groupId: groupId
+            }, function(tabs) {
+                groupOffset += tabs.length
+                // Sort tabs tab group's tabs while we have a reference to them
+                sortTabs(tabs, groupId, settings)
+            })
+        }
+        // Sort ungrouped tabs
+        chrome.tabs.query({
+            pinned: false,
+            groupId: -1
+        }, function(tabs) {
+            sortTabs(tabs, -1, settings)
+        })
+    })
+}
+
+async function sortTabs(tabs, groupId, settings) {
+    if (tabs.length > 0) {
+        TAB_SUSPENDER_EXTENSION_ID = settings.tabSuspenderExtensionId;
+        SUSPENDED_PREFIX = 'chrome-extension://' + TAB_SUSPENDER_EXTENSION_ID + '/suspended.html#';
+        SUSPENDED_PREFIX_LEN = SUSPENDED_PREFIX.length;
+        let firstTabIndex = tabs[0].index
+        switch (settings.sortBy) {
+            case "url":
+            case "title":
+                sortByTitleOrUrl(tabs, settings.sortBy, settings.groupSuspendedTabs, settings.sortPinnedTabs);
+                break;
+            case "custom":
+                sortByCustom(tabs, settings.groupFrom, settings.groupSuspendedTabs, settings.preserveOrderWithinGroups, settings.sortPinnedTabs);
+                break;
+        }
+
+        const tabIds = tabs.map(function(tab){ return tab.id; })
+        chrome.tabs.move(tabIds, { index: firstTabIndex });
+        if (groupId > -1) {
+            chrome.tabs.group({
+                groupId: groupId,
+                tabIds: tabIds
+            })
+        }
+    }
+}
 
 // Returns the tab's suspended URL if 'groupSuspendedTabs' is set - otherwise, return's the current tab's URL or suspended tab's original URL
 function tabToUrl(tab, groupSuspendedTabs) {
@@ -142,17 +177,12 @@ function sortByTitleOrUrl(tabs, sortBy, groupSuspendedTabs, sortPinnedTabs) {
 
     // Shift suspended tabs left (if groupSuspendedTabs == true). Otherwise, sort by title in the browser's current locale.
     function _titleComparator(a, b, groupSuspendedTabs, sortPinnedTabs) {
-        //  Don't sort grouped tabs until proper API support for tab groups is added to the chrome API...
-        if (a.groupId != -1 || b.groupId != -1) {
-            return 0;
-        }
 
         // Fix for Issue #6 - Option to exclude pinned tabs in the sort action (excluded by default now)
         if (!sortPinnedTabs && (a.pinned || b.pinned)) {
             return 0;
         }
 
-        // TODO: Verify whether this behavior was broken by the introduction of *Tab Groups*
         if (groupSuspendedTabs) {
             if (isSuspended(a) && !isSuspended(b)) return -1;
             if (!isSuspended(a) && isSuspended(b)) return 1;
@@ -162,11 +192,6 @@ function sortByTitleOrUrl(tabs, sortBy, groupSuspendedTabs, sortPinnedTabs) {
 
     // Shift suspended tabs left (if groupSuspendedTabs == true). Otherwise, sort by URL in the browser's current locale.
     function _urlComparator(a, b, groupSuspendedTabs, sortPinnedTabs) {
-
-        //  Don't sort grouped tabs until proper API support for tab groups is added to the chrome API...
-        if (a.groupId != -1 || b.groupId != -1) {
-            return 0;
-        }
 
         if (!sortPinnedTabs && (a.pinned || b.pinned)) {
             return 0;
@@ -218,12 +243,6 @@ function sortByCustom(tabs, groupFrom, groupSuspendedTabs, preserveOrderWithinGr
     }
 
     tabs.sort(function (a, b) {
-
-        //  Don't sort grouped tabs until proper API support for tab groups is added to the chrome API...
-        if (a.groupId != -1 || b.groupId != -1) {
-            return 0;
-        }
-
         return _customSortComparator(a, b, groupSuspendedTabs, sortPinnedTabs);
     });
 
@@ -282,12 +301,5 @@ function sortByCustom(tabs, groupFrom, groupSuspendedTabs, preserveOrderWithinGr
             return compareByUrlComponents(urlA, urlB);
         }
         return 0;
-    }
-}
-
-// Move tabs to their post-sort locations
-function moveTabs(tabs) {
-    for (let i = 0; i < tabs.length; i++) {
-        chrome.tabs.move(tabs[i].id, { index: i });
     }
 }

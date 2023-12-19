@@ -45,14 +45,29 @@
                                     <p>Thanks for taking the time to read this page. Doing so will, hopefully, save you time and improve your experience with this extension!
                                         Please refer back to this page after receiving updates because behavioral changes may be introduced as a result of any bug fixes or enhancement requests.
                                     </p>
-                                    <div class="alert alert-secondary">
-                                    <h5>Important note about Chrome "Tab Groups" Support</h5>
-                                    <p>Google Chrome recently introduced "Tab Groups" but it looks like this is a work in progress from an extension API perspective... I say this because a "groupId" field has been added to the Tab API but the tab group name
-                                        isn't available via the extension API and I've experienced tabs being removed from tab groups while sorting even though the tab group id's remain unchanged.</p>
-                                    <p><b>As of v0.3.2, Simple Tab Sorter ignores tab groups and the tabs contained within them.</b> Ungrouped tabs will continue to be sorted, as they were in previous releases, but the position and contents of tab groups will remain unchanged. </p>
-                                    <p>If you're using tab groups and <b>ungrouped</b> tabs aren't sorting the way you expect, I'd suggest positioning all of your tab groups to the left of your ungrouped tabs to see whether that resolves the problem. I'd like to add full
-                                        support for sorting Tab Groups in the future but that will be largely dependent on my limited available time, since doing so requires migrating to the Chrome API's manifest v3, which requires a pretty significant code and extension UI change.
-                                    </div>
+                                    <h4>Simple Tab Sorter or Super Tab Sorter - which one's right for you?</h4>
+                                    <p>
+                                        Simple Tab Sorter has grown in complexity since its initial release, as a result of user feedback (which is greatly appreciated) and significant changes made to the Chrome browser and API (no so much). It's reached the point 
+                                        where it doesn't feel as "Simple" as I had intially intended and I'm having to say "No" to feature requests that conflict with my design goals of being "Simple" and lightweight.
+                                    </p>
+                                    <p>
+                                        I created <a href="https://chromewebstore.google.com/detail/super-tab-sorter/jjhppbooocacaccnhjninhmigbfmpnkh" target="_blank">Super Tab Sorter</a>, a trustworthy alternative to Simple Tab Sorter for people who want more functionality and customization, even if that means additional complexity and resource consumption.
+                                    </p>
+                                    <p>
+                                        If you want something simple and light weight, that will remain that way, you'll probably be happier with Simple Tab Sorter. Simple Tab Sorter has entered "maintenance mode" and Super Tab Sorter is where I plan on adding functionality.
+                                    </p>
+                                    <h4>Tab Group Behavior (New in v0.4.0)</h4>
+                                    <p>Simple Tab Sorter officially supports Chrome's <a href="https://blog.google/products/chrome/manage-tabs-with-google-chrome/" target="_blank">Tab Groups</a> as of v0.4.0.
+                                        Tab Groups will be relocated to the left off all ungrouped tabs, in alphabetical title order, and their contents will be sorted using the same settings as ungrouped tabs.
+                                        <ol class="alert alert-primary">
+                                        If you wish to override the tab group order, I suggest naming your tabs with a numeric prefix that indicates your desired sort order. e.g., "1. Shopping", "2. Learning", "3. Work", etc.
+                                        </ol>  
+                                    </p>
+                                    <h4>Planned removal of Sort By Custom (v0.5.0)</h4>
+                                    <p>
+                                        In my opinion, the introduction of Chrome's Tab Groups has lessoned the need for "Sort By Custom (SBC)".  I think SBC has its place, for more demanding users, but I believe that users most likely to want SBC are more likely to use Super Tab Sorter. For that reason, Sort By Custom will remain
+                                        a sort option in <a href="https://chromewebstore.google.com/detail/super-tab-sorter/jjhppbooocacaccnhjninhmigbfmpnkh" target="_blank">Super Tab Sorter</a> and be removed from Simple Tab Sorter to minimize complexity and potential user confusion.
+                                    </p>
                                     <h4>General Usage and Behavior</h4>
                                     <p>Regardless of the settings you choose, it's important to understand the following 2 things:
                                         <ol class="alert alert-primary">
@@ -85,16 +100,16 @@
                                     <h6>Tab suspender extension id (required if "Group suspended tabs together" is unchecked)</h6>
                                     Look at the URL in your browser's address bar, for any suspended tab, and you should see something similar to the following...
                                     <div class="code">
-                                        chrome-extension://<mark>klbibkeccnjlkjkiokjodocebajanakg</mark>/suspended.html#ttl=Google&pos=0&uri=https://www.google.com/
+                                        chrome-extension://<mark>noogafoofpebimajpfpamcfhoaifemoa</mark>/suspended.html#ttl=Google&pos=0&uri=https://www.google.com/
                                     </div>
                                     <p></p>
-                                    The example above shows the URL for a suspended https://www.google.com/ tab that was suspended by the original The Great Suspender extension. The highlighted  portion between
-                                    <i>chrome-extension://</i> and <i>/suspended.html</i> is the "extension id" that you should copy/paste into the input field directly below "Group suspended tabs together" in the
+                                    The example above shows the URL for a suspended "https://www.google.com/" tab that was suspended by <a href="https://chromewebstore.google.com/detail/the-marvellous-suspender/noogafoofpebimajpfpamcfhoaifemoa" target="_blank">The Marvellous Suspender</a> (the de facto The Great Suspender successor) extension.
+                                    The highlighted  portion between <i>chrome-extension://</i> and <i>/suspended.html</i> is the "extension id" that you should copy/paste into the input field directly below "Group suspended tabs together" in the
                                     <a href="options.html">Settings</a> page - don't forget to click Save!
 
                                     <p></p>
-                                    <p>Please note that the original The Great Suspender's extension id will appear in the "Tab suspender extension id" field (it's the default value) until you change and save the value
-                                        in that field. This value can be safely ignored if you're not using The Great Suspender or an extension derived from it.
+                                    <p>Please note that <a href="https://chromewebstore.google.com/detail/the-marvellous-suspender/noogafoofpebimajpfpamcfhoaifemoa" target="_blank">The Marvellous Suspender</a>'s extension id will appear in the "Tab suspender extension id"
+                                        field until you change and save the value in that field. This value can be safely ignored if you're not using The Marvellous Suspender or an extension with a compatible URL convention.
                                     </p>
                                     <p></p>
                                     <h5>Group From (<em>Sort by Custom</em> only)</h5>
@@ -115,7 +130,7 @@
             </main>
         </div>
     </div>
-    <script src="jquery-3.4.1.slim.min.js"></script>
+    <script src="jquery-3.7.1.slim.min.js"></script>
     <script src="bootstrap.min.js"></script>
     <script src="version.js"></script
 </body>

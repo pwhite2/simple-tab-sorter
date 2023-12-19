@@ -6,10 +6,17 @@
 
 In addition to standard URL or title-based sorting, its "killer features" are:
 
-1. Simple manual override of tab group sort order.
+1. Respects Google Chrome's Tab Groups.
 2. User configurable sort behavior for handling tabs suspended by extensions forked from [The Great Suspender](https://github.com/greatsuspender/thegreatsuspender).
+3. Simple manual override of tab group sort order. 
 
-You can [submit a bug or a feature request](https://github.com/pwhite2/simple-tab-sorter/issues/) if you have issues with, or suggestions for, this extension. Please refer to the **User Guide**, which can be found in this extension's Options page, before submitting bug or feature requests.
+### Bugs / Feature Requests
+
+My intention is to keep this extension "Simple" and light weight. I've received feature requests that conflict with these goals and have created [Super Tab Sorter](https://github.com/pwhite2/super-tab-sorter/) with the intention of it being a feature rich version of Simple Tab Sorter. 
+
+You should [give Super Tab Sorter a try](https://chromewebstore.google.com/detail/super-tab-sorter/jjhppbooocacaccnhjninhmigbfmpnkh) if you want more functionality than Simple Tab Sorter and submit feature requests in [Super Tab Sorter's issue tracker](https://github.com/pwhite2/super-tab-sorter/issues/) if it's lacking functionality you desire. Please check the **User Guide** on the Options page before doing that. Also, keep in mind that these extensions sorts tabs, they don't "manage" them. Tab management is not what I do, so look for another extension if you need that.
+
+You can [submit bugs](https://github.com/pwhite2/simple-tab-sorter/issues/) if you encounter issues with this extension. Please refer to the **User Guide**, which can be found in this extension's Options page, before submitting bugs.
 
 I can be contacted via the contact form at [peterwhite.net](https://peterwhite.net) for other inquiries.
 

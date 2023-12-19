@@ -1,6 +1,6 @@
 #!/bin/sh
 
-VERSION="0.3.3"
+VERSION="0.4.0"
 
 # Replace version number if not already done so...
 gsed -i "s/\"version\": \".*\"/\"version\": \"$VERSION\"/g" src/manifest.json
