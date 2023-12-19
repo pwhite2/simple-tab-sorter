@@ -1,4 +1,4 @@
-const THE_GREAT_SUSPENDER_EXTENSION_ID = "klbibkeccnjlkjkiokjodocebajanakg";
+const THE_MARVELLOUS_SUSPENDER_EXTENSION_ID = "noogafoofpebimajpfpamcfhoaifemoa";
 
 // Save options to chrome.storage
 function saveOptions() {
@@ -27,11 +27,11 @@ function saveOptions() {
 function restoreOptions() {
     // Use default value and preserveOrderWithinGroups = false
     chrome.storage.sync.get({
-        sortBy: 'custom',
+        sortBy: 'url',
         groupFrom: 'leftToRight',
         preserveOrderWithinGroups: true,
         groupSuspendedTabs: false,
-        tabSuspenderExtensionId: THE_GREAT_SUSPENDER_EXTENSION_ID,
+        tabSuspenderExtensionId: THE_MARVELLOUS_SUSPENDER_EXTENSION_ID,
         sortPinnedTabs: false
     }, function (items) {
         toggleTabGroupOptions(items.sortBy);
@@ -46,18 +46,18 @@ function restoreOptions() {
 
 function toggleSaveButton() {
     chrome.storage.sync.get({
-        sortBy: 'custom',
+        sortBy: 'url',
         groupFrom: 'leftToRight',
         preserveOrderWithinGroups: true,
         groupSuspendedTabs: false,
-        tabSuspenderExtensionId: THE_GREAT_SUSPENDER_EXTENSION_ID,
+        tabSuspenderExtensionId: THE_MARVELLOUS_SUSPENDER_EXTENSION_ID,
         sortPinnedTabs: false
     }, function (items) {
         if (document.getElementById('sortBy').value != items.sortBy ||
             document.getElementById('groupFrom').value != items.groupFrom ||
             document.getElementById('preserveOrderWithinGroups').checked != items.preserveOrderWithinGroups ||
             document.getElementById('groupSuspendedTabs').checked != items.groupSuspendedTabs ||
-            (document.getElementById('tabSuspenderExtensionId').value != items.tabSuspenderExtensionId && document.getElementById('tabSuspenderExtensionId').value != THE_GREAT_SUSPENDER_EXTENSION_ID ) ||
+            (document.getElementById('tabSuspenderExtensionId').value != items.tabSuspenderExtensionId && document.getElementById('tabSuspenderExtensionId').value != THE_MARVELLOUS_SUSPENDER_EXTENSION_ID ) ||
             document.getElementById('sortPinnedTabs').checked != items.sortPinnedTabs) {
             document.getElementById('save').removeAttribute("disabled");
             // Hide status to reflect that changes have not been saved
