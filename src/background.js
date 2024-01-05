@@ -57,7 +57,11 @@ async function sortTabGroups() {
         sortPinnedTabs: false
     });
 
+    // I believe this was unnecessary in manifest v2, IIRC, and that the "default window" worked as expected though that's not the case in manifest v3.
+    let currentWindow  = await chrome.windows.getLastFocused()
+
     let pinnedTabs = await chrome.tabs.query({
+        windowId: currentWindow.id,
         pinned: true,
         currentWindow: true,
     })
@@ -67,7 +71,7 @@ async function sortTabGroups() {
         sortTabs(pinnedTabs, pinnedTabs[0].groupId, settings)
     }
 
-    await chrome.tabGroups.query({ windowId: -1 }, function (tabGroups) {
+    await chrome.tabGroups.query({ windowId: currentWindow.id }, function (tabGroups) {
         // You can prefix your tab group names with numeric values if you'd like to override the sort order...
         tabGroups.sort(function (a, b) {
             return b.title.localeCompare(a.title);
@@ -78,6 +82,7 @@ async function sortTabGroups() {
             let groupId = tabGroups[i].id
             chrome.tabGroups.move(groupId, { index: groupOffset });
             chrome.tabs.query({
+                windowId: currentWindow.id,
                 groupId: groupId
             }, function(tabs) {
                 groupOffset += tabs.length
@@ -87,6 +92,7 @@ async function sortTabGroups() {
         }
         // Sort ungrouped tabs
         chrome.tabs.query({
+            windowId: currentWindow.id,
             pinned: false,
             groupId: -1
         }, function(tabs) {
