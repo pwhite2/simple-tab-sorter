@@ -1,20 +1,21 @@
 {
     "name": "Simple Tab Sorter",
     "description": "Simple tab sorter that allows user-defined tab group order.",
-    "version": "0.4.2",
+    "version": "0.4.3",
     "manifest_version": 3,
     "permissions": ["tabs", "tabGroups", "storage"],
+    "host_permissions": ["<all_urls>"],
     "background": {
         "service_worker": "background.js"
     },
     "action": {
         "default_title": "Simple Tab Sorter",
-        "default_popup": "./popup.html",
+        "default_popup": "popup.html",
         "default_icons": {
             "128": "img/128.png",
             "48": "img/48.png",
             "16": "img/16.png"
         }
     },
-    "options_page": "./options.html"
+    "options_page": "options.html"
 }

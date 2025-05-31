@@ -1,110 +1,115 @@
-const THE_MARVELLOUS_SUSPENDER_EXTENSION_ID = "noogafoofpebimajpfpamcfhoaifemoa";
+/**
+ * Simple Tab Sorter Options Script
+ * Handles the options page functionality
+ */
 
-// Save options to chrome.storage
-function saveOptions() {
-    var sortBy = document.getElementById('sortBy').value;
-    var groupFrom = document.getElementById('groupFrom').value;
-    var preserveOrderWithinGroups = document.getElementById('preserveOrderWithinGroups').checked;
-    var groupSuspendedTabs = document.getElementById('groupSuspendedTabs').checked;
-    var tabSuspenderExtensionId = document.getElementById('tabSuspenderExtensionId').value;
-    var sortPinnedTabs = document.getElementById('sortPinnedTabs').checked;
-    chrome.storage.sync.set({
-        sortBy: sortBy,
-        groupFrom: groupFrom,
-        preserveOrderWithinGroups: preserveOrderWithinGroups,
-        groupSuspendedTabs: groupSuspendedTabs,
-        tabSuspenderExtensionId: tabSuspenderExtensionId,
-        sortPinnedTabs: sortPinnedTabs
-    }, function () {
-        document.getElementById('save').setAttribute("disabled", true);
-        // Show status to let user know changes were saved
-        $('#status').removeClass("invisible");
-        $('#status').addClass("visible");
-    });
+// Constants
+const STATUS_DISPLAY_TIME = 3000; // Time in milliseconds to show status messages
+const DEFAULT_SETTINGS = {
+    sortBy: "url",
+    groupFrom: "leftToRight",
+    preserveOrderWithinGroups: false,
+    groupSuspendedTabs: false,
+    sortPinnedTabs: false,
+    reverseOrder: false,
+    autoSort: false,
+    tabSuspenderExtensionId: "noogafoofpebimajpfpamcfhoaifemoa"
+};
+
+// DOM Elements
+const elements = {
+    form: document.getElementById('settings-form'),
+    sortBy: document.getElementById('sortBy'),
+    groupFrom: document.getElementById('groupFrom'),
+    preserveOrderWithinGroups: document.getElementById('preserveOrderWithinGroups'),
+    groupSuspendedTabs: document.getElementById('groupSuspendedTabs'),
+    sortPinnedTabs: document.getElementById('sortPinnedTabs'),
+    tabSuspenderExtensionId: document.getElementById('tabSuspenderExtensionId'),
+    saveButton: document.getElementById('save'),
+    status: document.getElementById('status')
+};
+
+/**
+ * UI Controller class to handle all UI-related operations
+ */
+class UIController {
+    /**
+     * Shows a status message to the user
+     * @param {string} message - The message to display
+     * @param {string} type - The type of message ('success' or 'error')
+     */
+    static showStatus(message, type) {
+        elements.status.textContent = message;
+        elements.status.className = `btn alert-${type}`;
+        elements.status.classList.remove('invisible');
+        
+        setTimeout(() => {
+            elements.status.classList.add('invisible');
+        }, STATUS_DISPLAY_TIME);
+    }
+
+    /**
+     * Updates the form with the current settings
+     * @param {Object} settings - The current settings
+     */
+    static updateForm(settings) {
+        elements.sortBy.value = settings.sortBy;
+        elements.groupFrom.value = settings.groupFrom;
+        elements.preserveOrderWithinGroups.checked = settings.preserveOrderWithinGroups;
+        elements.groupSuspendedTabs.checked = settings.groupSuspendedTabs;
+        elements.sortPinnedTabs.checked = settings.sortPinnedTabs;
+        elements.tabSuspenderExtensionId.value = settings.tabSuspenderExtensionId;
+        elements.saveButton.disabled = false;
+    }
 }
 
-// Restore options state from chrome.storage
-function restoreOptions() {
-    // Use default value and preserveOrderWithinGroups = false
-    chrome.storage.sync.get({
-        sortBy: 'url',
-        groupFrom: 'leftToRight',
-        preserveOrderWithinGroups: true,
-        groupSuspendedTabs: false,
-        tabSuspenderExtensionId: THE_MARVELLOUS_SUSPENDER_EXTENSION_ID,
-        sortPinnedTabs: false
-    }, function (items) {
-        toggleTabGroupOptions(items.sortBy);
-        document.getElementById('sortBy').value = items.sortBy;
-        document.getElementById('groupFrom').value = items.groupFrom;
-        document.getElementById('preserveOrderWithinGroups').checked = items.preserveOrderWithinGroups;
-        document.getElementById('groupSuspendedTabs').checked = items.groupSuspendedTabs;
-        document.getElementById('tabSuspenderExtensionId').value = items.tabSuspenderExtensionId;
-        document.getElementById('sortPinnedTabs').checked = items.sortPinnedTabs;
-    });
-}
-
-function toggleSaveButton() {
-    chrome.storage.sync.get({
-        sortBy: 'url',
-        groupFrom: 'leftToRight',
-        preserveOrderWithinGroups: true,
-        groupSuspendedTabs: false,
-        tabSuspenderExtensionId: THE_MARVELLOUS_SUSPENDER_EXTENSION_ID,
-        sortPinnedTabs: false
-    }, function (items) {
-        if (document.getElementById('sortBy').value != items.sortBy ||
-            document.getElementById('groupFrom').value != items.groupFrom ||
-            document.getElementById('preserveOrderWithinGroups').checked != items.preserveOrderWithinGroups ||
-            document.getElementById('groupSuspendedTabs').checked != items.groupSuspendedTabs ||
-            (document.getElementById('tabSuspenderExtensionId').value != items.tabSuspenderExtensionId && document.getElementById('tabSuspenderExtensionId').value != THE_MARVELLOUS_SUSPENDER_EXTENSION_ID ) ||
-            document.getElementById('sortPinnedTabs').checked != items.sortPinnedTabs) {
-            document.getElementById('save').removeAttribute("disabled");
-            // Hide status to reflect that changes have not been saved
-            $('#status').removeClass("visible");
-            $('#status').addClass("invisible");
-        } else {
-            document.getElementById('save').setAttribute("disabled", true);
+/**
+ * Options Controller class to handle all options-related operations
+ */
+class OptionsController {
+    /**
+     * Loads the current settings
+     */
+    static async loadSettings() {
+        try {
+            const settings = await chrome.storage.sync.get(DEFAULT_SETTINGS);
+            UIController.updateForm(settings);
+        } catch (error) {
+            UIController.showStatus('Error loading settings', 'danger');
+            console.error('Error loading settings:', error);
         }
-    });
-}
-
-function toggleTabSuspenderExtensionId() {
-    if (document.getElementById('groupSuspendedTabs').checked) {
-        document.getElementById('tabSuspenderExtensionId').setAttribute("disabled", true);
-    } else {
-        document.getElementById('tabSuspenderExtensionId').removeAttribute("disabled");
     }
-    toggleSaveButton();
-}
 
-function toggleTabGroupOptions(sortBy) {
-    if (sortBy == "title" || sortBy == "url") {
-        $('#groupFrom').prop('disabled', true);
-        $('#preserveOrderWithinGroups').prop('disabled', true);
-    } else {
-        $('#groupFrom').prop('disabled', false);
-        $('#preserveOrderWithinGroups').prop('disabled', false);
+    /**
+     * Saves the current settings
+     * @param {Object} settings - The settings to save
+     */
+    static async saveSettings(settings) {
+        try {
+            await chrome.storage.sync.set(settings);
+            UIController.showStatus('Settings saved successfully', 'success');
+        } catch (error) {
+            UIController.showStatus('Error saving settings', 'danger');
+            console.error('Error saving settings:', error);
+        }
     }
-    toggleSaveButton();
 }
 
-document.addEventListener('DOMContentLoaded', restoreOptions);
-$("#settings-form").submit(function(e) {
+// Event Listeners
+elements.form.addEventListener('submit', async (e) => {
     e.preventDefault();
+    
+    const settings = {
+        sortBy: elements.sortBy.value,
+        groupFrom: elements.groupFrom.value,
+        preserveOrderWithinGroups: elements.preserveOrderWithinGroups.checked,
+        groupSuspendedTabs: elements.groupSuspendedTabs.checked,
+        sortPinnedTabs: elements.sortPinnedTabs.checked,
+        tabSuspenderExtensionId: elements.tabSuspenderExtensionId.value
+    };
+
+    await OptionsController.saveSettings(settings);
 });
 
-document.getElementById('sortBy').addEventListener('change', function() {
-    toggleTabGroupOptions(this.value);
-});
-
-document.getElementById('groupFrom').addEventListener('change', toggleSaveButton);
-document.getElementById('preserveOrderWithinGroups').addEventListener('change', toggleSaveButton);
-document.getElementById('groupSuspendedTabs').addEventListener('change', toggleTabSuspenderExtensionId);
-document.getElementById('tabSuspenderExtensionId').addEventListener('input', toggleSaveButton);
-document.getElementById('sortPinnedTabs').addEventListener('change', toggleSaveButton);
-document.getElementById('save').addEventListener('click', saveOptions);
-
-$(document).ready(function() {
-    toggleTabSuspenderExtensionId();
-});
+// Initialize
+OptionsController.loadSettings();
