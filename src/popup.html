@@ -1,6 +1,157 @@
-<html>
-    <body style="width: 400px">
-      <p>Please ignore - this is the result of the mandatory Chrome extension manifest v3 changes and you should only be seeing this because of the modal dialog when first activated after a new installation or extension version update.
-      <script src="./popup.js"></script>
-    </body>
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Simple Tab Sorter</title>
+    <link rel="stylesheet" href="bootstrap.min.css">
+    <link rel="stylesheet" href="style.css">
+    <style>
+        /* Base styles */
+        body {
+            width: 300px;
+            padding: 15px;
+            font-family: system-ui, -apple-system, sans-serif;
+            margin: 0;
+            background-color: #f5f5f5;
+        }
+
+        /* Container styles */
+        .container {
+            background-color: white;
+            border-radius: 8px;
+            padding: 15px;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+        }
+
+        /* Button styles */
+        .button-container {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+        }
+
+        button {
+            padding: 10px 16px;
+            border: none;
+            border-radius: 6px;
+            color: white;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            font-weight: 500;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+        }
+
+        button:hover {
+            transform: translateY(-1px);
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+        }
+
+        button:active {
+            transform: translateY(0);
+        }
+
+        /* Primary button */
+        button.primary {
+            background-color: #4CAF50;
+        }
+
+        button.primary:hover {
+            background-color: #45a049;
+        }
+
+        /* Danger button */
+        button.danger {
+            background-color: #f44336;
+        }
+
+        button.danger:hover {
+            background-color: #da190b;
+        }
+
+        /* Status message styles */
+        .status {
+            margin-top: 12px;
+            padding: 10px;
+            border-radius: 6px;
+            display: none;
+            font-size: 14px;
+            text-align: center;
+        }
+
+        .success {
+            background-color: #dff0d8;
+            color: #3c763d;
+            border: 1px solid #d6e9c6;
+        }
+
+        .error {
+            background-color: #f2dede;
+            color: #a94442;
+            border: 1px solid #ebccd1;
+        }
+
+        /* Icon styles */
+        .icon {
+            width: 16px;
+            height: 16px;
+            fill: currentColor;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="row">
+            <div class="col-12">
+                <h4 class="text-center mb-3">Simple Tab Sorter</h4>
+            </div>
+        </div>
+        
+        <div class="row mb-3">
+            <div class="col-12">
+                <button id="sortTabs" class="btn btn-primary btn-block">Sort Tabs</button>
+            </div>
+        </div>
+        
+        <div class="row mb-3">
+            <div class="col-12">
+                <button id="removeDuplicates" class="btn btn-secondary btn-block">Remove Duplicates</button>
+            </div>
+        </div>
+
+        <div class="row mb-3">
+            <div class="col-12">
+                <button id="undoSort" class="btn btn-info btn-block">Undo Last Sort</button>
+            </div>
+        </div>
+
+        <div class="row mb-3">
+            <div class="col-12">
+                <div class="form-check">
+                    <input type="checkbox" class="form-check-input" id="autoSort">
+                    <label class="form-check-label" for="autoSort">Auto-sort on new tab</label>
+                </div>
+            </div>
+        </div>
+        
+        <div class="row">
+            <div class="col-12">
+                <div id="status" class="status" style="display: none;"></div>
+            </div>
+        </div>
+
+        <div class="row mt-3">
+            <div class="col-12">
+                <a href="options.html" class="btn btn-link btn-block">Options</a>
+            </div>
+        </div>
+    </div>
+
+    <script src="jquery-3.7.1.slim.min.js"></script>
+    <script src="bootstrap.min.js"></script>
+    <script src="popup.js"></script>
+</body>
 </html>
